@@ -172,7 +172,7 @@ function auditTool(
         projectedMonthlySpend: input.monthlySpend - credexSavings,
         monthlySavings: credexSavings,
         annualSavings: credexSavings * 12,
-        reasoning: `${tool.name} ${currentPlan?.name ?? ""} is already the right plan for your use case. Discounted credits through Credex could reduce this bill by ~25% without changing anything about your workflow.`,
+        reasoning: `${tool.name} ${currentPlan?.name ?? ""} is already the right plan for your use case. Discounted credits through Tarka AI could reduce this bill by ~25% without changing anything about your workflow.`,
         credexApplicable: true,
       };
     }
@@ -201,7 +201,7 @@ function auditApiTool(
       projectedMonthlySpend: input.monthlySpend - credexSavings,
       monthlySavings: credexSavings,
       annualSavings: credexSavings * 12,
-      reasoning: `API spend of $${input.monthlySpend}/mo is a strong candidate for discounted credits. Credex sources overforecast infrastructure — the same API access, ~25% off retail pricing.`,
+      reasoning: `API spend of $${input.monthlySpend}/mo is a strong candidate for discounted credits. Tarka AI sources overforecast infrastructure — the same API access, ~25% off retail pricing.`,
       credexApplicable: true,
     };
   }
