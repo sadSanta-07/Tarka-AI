@@ -3,3 +3,6 @@ watch() subscription for localStorage instead of useEffect with watchedTools as 
 handleToolChange resets planId to "" when tool changes. Without this, someone could switch from Cursor to Claude while still having planId: "pro" — which exists on both but means different things. Prevents silent wrong data.
 
 z.coerce.number() on seats and monthlySpend. HTML inputs always return strings — coerce converts "20" to 20 before validation. Without this, your zod schema would reject valid inputs.
+
+
+honeypot over captcha — the spec says document your choice. Honeypot is invisible to real users, zero friction, catches most bots. Captcha would hurt conversion on a tool where the value is shown first. Document this in your ARCHITECTURE.md.
