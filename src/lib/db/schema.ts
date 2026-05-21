@@ -33,8 +33,9 @@ export type AuditResultData = {
   totalMonthlySavings: number;
   totalAnnualSavings: number;
   totalCurrentSpend: number;
-  optimizationScore: number;  
-  aiSummary: string | null;   // Gemini generated para
+  optimizationScore: number;
+  aiSummary: string | null;
+  generatedAt: string;
 };
 
 
