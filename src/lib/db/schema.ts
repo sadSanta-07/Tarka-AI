@@ -1,12 +1,10 @@
 import { pgTable, text, integer, timestamp, jsonb, boolean } from "drizzle-orm/pg-core";
 
-// ─── Types for the JSON blobs ────────────────────────────────────────────────
-
 export type ToolInput = {
-  toolId: string;        // e.g. "cursor", "chatgpt"
-  plan: string;          // e.g. "pro", "business"
+  toolId: string;        
+  planId: string;         
   seats: number;
-  monthlySpend: number;  // what they say they pay (USD)
+  monthlySpend: number;  //(USD)
 };
 
 export type AuditInputData = {
@@ -26,8 +24,8 @@ export type ToolRecommendation = {
   projectedMonthlySpend: number;
   monthlySavings: number;
   annualSavings: number;
-  reasoning: string;          // the defensible 1-sentence reason
-  credexApplicable: boolean;  // can Credex credits help here?
+  reasoning: string;          
+  credexApplicable: boolean;  
 };
 
 export type AuditResultData = {
@@ -35,19 +33,16 @@ export type AuditResultData = {
   totalMonthlySavings: number;
   totalAnnualSavings: number;
   totalCurrentSpend: number;
-  optimizationScore: number;  // 0–100, how well-optimized they already are
-  aiSummary: string | null;   // Gemini-generated paragraph, null if API failed
-  generatedAt: string;        // ISO timestamp
+  optimizationScore: number;  
+  aiSummary: string | null;   // Gemini generated para
 };
 
-// ─── Tables ──────────────────────────────────────────────────────────────────
 
 export const audits = pgTable("audits", {
-  id: text("id").primaryKey(),               // nanoid slug, also the public URL key
+  id: text("id").primaryKey(),
   inputData: jsonb("input_data").$type<AuditInputData>().notNull(),
   resultData: jsonb("result_data").$type<AuditResultData>().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  // soft link back to lead (nullable — audit exists before email is captured)
   leadId: text("lead_id"),
 });
 
@@ -58,9 +53,8 @@ export const leads = pgTable("leads", {
   companyName: text("company_name"),
   role: text("role"),
   teamSize: integer("team_size"),
-  // derived from audit at capture time — avoids a join on every email check
   totalMonthlySavings: integer("total_monthly_savings").notNull(),
-  isHighValue: boolean("is_high_value").notNull(), // savings > $500/mo
+  isHighValue: boolean("is_high_value").notNull(),
   emailSent: boolean("email_sent").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
