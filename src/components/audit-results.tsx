@@ -21,7 +21,7 @@ type Audit = InferSelectModel<typeof audits>;
 const ACTION_LABELS = {
   downgrade: { label: "Downgrade plan", color: "text-amber-400", bg: "bg-amber-400/10 border-amber-400/20" },
   switch: { label: "Switch tool", color: "text-blue-400", bg: "bg-blue-400/10 border-blue-400/20" },
-  credits: { label: "Buy via Tarka AI", color: "text-emerald-400", bg: "bg-emerald-400/10 border-emerald-400/20" },
+  credits: { label: "Save via Credex", color: "text-emerald-400", bg: "bg-emerald-400/10 border-emerald-400/20" },
   keep: { label: "Already optimal", color: "text-zinc-400", bg: "bg-zinc-800/60 border-zinc-700" },
 } as const;
 
@@ -155,16 +155,16 @@ export function AuditResults({ audit }: { audit: Audit }) {
               <AlertCircle className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold text-zinc-100">
-                  You qualify for Tarka AI credits
+                  You qualify for Credex credits
                 </p>
                 <p className="mt-1 text-sm text-zinc-400">
                   With ${resultData.totalMonthlySavings}/mo in identified savings, discounted AI
-                  infrastructure credits from Tarka AI could reduce your bill further — without
+                  infrastructure credits from Credex could reduce your bill further — without
                   changing your workflow. We source overforecast credits from companies that
                   pivoted.
                 </p>
                 <a
-                  href="https://Tarka AI.rocks"
+                  href="https://Credex.rocks"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-3 inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-zinc-950 transition-colors hover:bg-emerald-400"

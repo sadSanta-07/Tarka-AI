@@ -61,7 +61,7 @@ function buildFallbackSummary(
 
   const credexNote =
     result.totalMonthlySavings > 500
-      ? " Discounted AI credits through Tarka AI could reduce costs even further without changing your workflow."
+      ? " Discounted AI credits through Credex could reduce costs even further without changing your workflow."
       : "";
 
   return `Your team of ${input.teamSize} is ${scoreMeaning}, with an optimization score of ${score}/100. Current spend is $${result.totalCurrentSpend}/mo, with potential savings of $${result.totalMonthlySavings}/mo ($${result.totalAnnualSavings}/yr). The biggest opportunity is ${topSaving?.toolName ?? "your current stack"}, where ${topSaving?.reasoning ?? "a pricing adjustment could reduce costs"}${credexNote}`;

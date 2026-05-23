@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       url: `https://your-domain.com/audit/${auditId}`,
-      siteName: "Tarka AI Spend Audit",
+      siteName: "Tarka AI — Powered by Credex",
       type: "website",
     },
     twitter: {
