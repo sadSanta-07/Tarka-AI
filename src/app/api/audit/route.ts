@@ -34,7 +34,6 @@ export async function POST(req: NextRequest) {
   const aiSummary = await generateAuditSummary(inputData, resultData);
   resultData.aiSummary = aiSummary; 
 
-  
   const auditId = nanoid(10); 
 
   try {
