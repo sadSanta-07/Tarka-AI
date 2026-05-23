@@ -126,8 +126,7 @@ function buildEmailHtml({
     isHighValue: boolean;
     auditId: string;
 }) {
-    // const auditUrl = `https://your-domain.com/audit/${auditId}`;
-    const auditUrl = `http://localhost:3000/audit/${auditId}`;
+    const auditUrl = `https://tarka-ai.vercel.app/audit/${auditId}`;
     const greeting = company ? `Hi ${company} team,` : "Hi,";
 
     const savingsBlock =

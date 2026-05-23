@@ -89,6 +89,8 @@ export function LeadCaptureForm({
           className="hidden"
           tabIndex={-1}
           autoComplete="off"
+          aria-hidden="true"
+          title="Leave this field blank"
         />
 
         <input

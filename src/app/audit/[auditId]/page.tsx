@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      url: `https://your-domain.com/audit/${auditId}`,
+      url: `https://tarka-ai.vercel.app/audit/${auditId}`,
       siteName: "Tarka AI — Powered by Credex",
       type: "website",
     },
