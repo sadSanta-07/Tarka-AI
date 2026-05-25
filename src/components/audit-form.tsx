@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2, Loader2, ChevronDown } from "lucide-react";
 import { TOOLS } from "@/lib/pricing-data";
@@ -11,11 +11,11 @@ import { auditFormSchema, type AuditFormValues } from "@/lib/form-schema";
 const STORAGE_KEY = "credex_audit_form";
 
 const USE_CASES = [
-  { value: "coding",   label: "Coding & Engineering" },
-  { value: "writing",  label: "Writing & Content" },
-  { value: "data",     label: "Data & Analysis" },
+  { value: "coding", label: "Coding & Engineering" },
+  { value: "writing", label: "Writing & Content" },
+  { value: "data", label: "Data & Analysis" },
   { value: "research", label: "Research" },
-  { value: "mixed",    label: "Mixed / General" },
+  { value: "mixed", label: "Mixed / General" },
 ] as const;
 
 const DEFAULT_TOOL_ROW: AuditFormValues["tools"][number] = {
@@ -41,7 +41,6 @@ export default function AuditForm() {
   const {
     register,
     handleSubmit,
-    watch,
     control,
     setValue,
     reset,
@@ -49,7 +48,10 @@ export default function AuditForm() {
   } = form;
 
   const { fields, append, remove } = useFieldArray({ control, name: "tools" });
-  const watchedTools = watch("tools");
+  const watchedTools = useWatch({
+    control,
+    name: "tools",
+  });
 
   // Restore from localStorage on mount
   useEffect(() => {
@@ -59,7 +61,7 @@ export default function AuditForm() {
         const parsed = JSON.parse(saved) as AuditFormValues;
         reset(parsed);
       }
-    } catch {    }
+    } catch { }
   }, [reset]);
 
   const handleFormChange = useCallback(() => {
@@ -112,6 +114,7 @@ export default function AuditForm() {
 
   return (
     <form
+      aria-label="AI spend audit form"
       onSubmit={handleSubmit(onSubmit)}
       onChange={handleFormChange}
       className="space-y-6"
@@ -122,126 +125,198 @@ export default function AuditForm() {
           <h2 className="text-sm font-semibold uppercase tracking-widest text-zinc-400">
             Your AI Tools
           </h2>
-          <span className="text-xs text-zinc-500">
+          <span className="text-xs text-zinc-400">
             {fields.length} tool{fields.length !== 1 ? "s" : ""}
           </span>
         </div>
 
         {fields.map((field, index) => {
           const selectedToolId = watchedTools[index]?.toolId;
-          const selectedTool = TOOLS.find((t) => t.id === selectedToolId);
+
+          const selectedTool = TOOLS.find(
+            (t) => t.id === selectedToolId
+          );
 
           return (
-            <div
+            <fieldset
               key={field.id}
-              className="group relative grid grid-cols-[1fr_1fr_80px_100px_36px] gap-2 items-start rounded-xl border border-zinc-800 bg-zinc-900/60 p-3 transition-colors hover:border-zinc-700"
+              className="rounded-2xl border border-zinc-700 bg-zinc-900/70 p-4"
             >
-              {/* Tool */}
-              <div className="space-y-1">
-                <label className="text-xs text-zinc-500">Tool</label>
-                <div className="relative">
-                  <select
-                    {...register(`tools.${index}.toolId`)}
-                    onChange={(e) => handleToolChange(index, e.target.value)}
-                    className="w-full appearance-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
+              <legend className="sr-only">
+                AI Tool Configuration {index + 1}
+              </legend>
+
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_100px_140px_56px]">
+
+                {/* TOOL */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`tool-${index}`}
+                    className="block text-sm font-medium text-zinc-200"
                   >
-                    <option value="">Select tool…</option>
-                    {TOOLS.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2 top-2.5 h-4 w-4 text-zinc-500" />
-                </div>
-                {errors.tools?.[index]?.toolId && (
-                  <p className="text-xs text-red-400">
-                    {errors.tools[index]?.toolId?.message}
-                  </p>
-                )}
-              </div>
+                    Tool
+                  </label>
 
-              {/* Plan */}
-              <div className="space-y-1">
-                <label className="text-xs text-zinc-500">Plan</label>
-                <div className="relative">
-                  <select
-                    {...register(`tools.${index}.planId`)}
-                    disabled={!selectedTool}
-                    className="w-full appearance-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40 disabled:cursor-not-allowed disabled:opacity-40"
+                  <div className="relative">
+                    <select
+                      id={`tool-${index}`}
+                      aria-invalid={
+                        errors.tools?.[index]?.toolId
+                          ? true
+                          : undefined
+                      }
+                      aria-describedby={
+                        errors.tools?.[index]?.toolId
+                          ? `tool-error-${index}`
+                          : undefined
+                      }
+                      {...register(`tools.${index}.toolId`)}
+                      onChange={(e) =>
+                        handleToolChange(index, e.target.value)
+                      }
+                      className="min-h-[48px] w-full appearance-none rounded-xl border border-zinc-600 bg-zinc-800 px-4 pr-10 text-sm text-white transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    >
+                      <option value="">Select tool</option>
+
+                      {TOOLS.map((tool) => (
+                        <option
+                          key={tool.id}
+                          value={tool.id}
+                        >
+                          {tool.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <ChevronDown
+                      aria-hidden="true"
+                      className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400"
+                    />
+                  </div>
+
+                  {errors.tools?.[index]?.toolId && (
+                    <p
+                      id={`tool-error-${index}`}
+                      role="alert"
+                      className="text-xs text-red-400"
+                    >
+                      {errors.tools[index]?.toolId?.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* PLAN */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`plan-${index}`}
+                    className="block text-sm font-medium text-zinc-200"
                   >
-                    <option value="">Select plan…</option>
-                    {selectedTool?.plans.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name}{" "}
-                        {p.pricePerSeat > 0
-                          ? `— $${p.pricePerSeat}/seat`
-                          : "— Free"}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2 top-2.5 h-4 w-4 text-zinc-500" />
+                    Plan
+                  </label>
+
+                  <div className="relative">
+                    <select
+                      id={`plan-${index}`}
+                      disabled={!selectedTool}
+                      aria-invalid={
+                        errors.tools?.[index]?.planId
+                          ? true
+                          : undefined
+                      }
+                      {...register(`tools.${index}.planId`)}
+                      className="min-h-[48px] w-full appearance-none rounded-xl border border-zinc-600 bg-zinc-800 px-4 pr-10 text-sm text-white transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="">Select plan</option>
+
+                      {selectedTool?.plans.map((plan) => (
+                        <option
+                          key={plan.id}
+                          value={plan.id}
+                        >
+                          {plan.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <ChevronDown
+                      aria-hidden="true"
+                      className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400"
+                    />
+                  </div>
                 </div>
-                {errors.tools?.[index]?.planId && (
-                  <p className="text-xs text-red-400">
-                    {errors.tools[index]?.planId?.message}
-                  </p>
-                )}
-              </div>
 
-              {/* Seats */}
-              <div className="space-y-1">
-                <label className="text-xs text-zinc-500">Seats</label>
-                <input
-                  type="number"
-                  min={1}
-                  {...register(`tools.${index}.seats`, { valueAsNumber: true })}
-                  className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
-                />
-                {errors.tools?.[index]?.seats && (
-                  <p className="text-xs text-red-400">
-                    {errors.tools[index]?.seats?.message}
-                  </p>
-                )}
-              </div>
+                {/* SEATS */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`seats-${index}`}
+                    className="block text-sm font-medium text-zinc-200"
+                  >
+                    Seats
+                  </label>
 
-              {/* Monthly Spend */}
-              <div className="space-y-1">
-                <label className="text-xs text-zinc-500">$/month</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2 text-sm text-zinc-500">
-                    $
-                  </span>
                   <input
+                    id={`seats-${index}`}
                     type="number"
-                    min={0}
-                    step="0.01"
-                    {...register(`tools.${index}.monthlySpend`, {
+                    min={1}
+                    inputMode="numeric"
+                    {...register(`tools.${index}.seats`, {
                       valueAsNumber: true,
                     })}
-                    className="w-full rounded-lg border border-zinc-700 bg-zinc-800 py-2 pl-6 pr-3 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
+                    className="min-h-[48px] w-full rounded-xl border border-zinc-600 bg-zinc-800 px-4 text-sm text-white transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
-                {errors.tools?.[index]?.monthlySpend && (
-                  <p className="text-xs text-red-400">
-                    {errors.tools[index]?.monthlySpend?.message}
-                  </p>
-                )}
-              </div>
 
-              {/* Remove */}
-              <div className="flex items-end pb-0.5">
-                <button
-                  type="button"
-                  onClick={() => remove(index)}
-                  disabled={fields.length === 1}
-                  className="rounded-lg p-2 text-zinc-600 transition-colors hover:bg-zinc-800 hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-30"
-                  aria-label="Remove tool"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                {/* MONTHLY SPEND */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor={`monthly-${index}`}
+                    className="block text-sm font-medium text-zinc-200"
+                  >
+                    Monthly Spend
+                  </label>
+
+                  <div className="relative">
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
+                    >
+                      $
+                    </span>
+
+                    <input
+                      id={`monthly-${index}`}
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      inputMode="decimal"
+                      {...register(
+                        `tools.${index}.monthlySpend`,
+                        {
+                          valueAsNumber: true,
+                        }
+                      )}
+                      className="min-h-[48px] w-full rounded-xl border border-zinc-600 bg-zinc-800 py-2 pl-8 pr-4 text-sm text-white transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                {/* REMOVE */}
+                <div className="flex items-end">
+                  <button
+                    type="button"
+                    onClick={() => remove(index)}
+                    disabled={fields.length === 1}
+                    aria-label={`Remove tool ${index + 1}`}
+                    className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800 text-zinc-300 transition hover:border-red-500 hover:text-red-400 disabled:opacity-40"
+                  >
+                    <Trash2
+                      aria-hidden="true"
+                      className="h-4 w-4"
+                    />
+                  </button>
+                </div>
               </div>
-            </div>
+            </fieldset>
           );
         })}
 
@@ -249,23 +324,30 @@ export default function AuditForm() {
           type="button"
           onClick={() => append({ ...DEFAULT_TOOL_ROW })}
           disabled={fields.length >= 20}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 py-3 text-sm text-zinc-500 transition-colors hover:border-emerald-600 hover:text-emerald-400 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 py-3 text-sm text-zinc-400 transition-colors hover:border-emerald-600 hover:text-emerald-400 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <Plus className="h-4 w-4" />
+          <Plus
+            aria-hidden="true"
+            className="h-4 w-4"
+          />
           Add another tool
         </button>
       </div>
 
       {/* ── Team Context ── */}
-      <div className="grid grid-cols-2 gap-4 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+      <div className="grid gap-4 md:grid-cols-2 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
         <div className="space-y-1">
-          <label className="text-sm font-medium text-zinc-300">Team size</label>
-          <p className="text-xs text-zinc-500">Total people on your team</p>
+          <label
+            htmlFor="team-size"
+            className="text-sm font-medium text-zinc-200"
+          >Team size</label>
+          <p className="text-xs text-zinc-400">Total people on your team</p>
           <input
+            id="team-size"
             type="number"
             min={1}
             {...register("teamSize", { valueAsNumber: true })}
-            className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
+            className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
           {errors.teamSize && (
             <p className="text-xs text-red-400">{errors.teamSize.message}</p>
@@ -273,14 +355,19 @@ export default function AuditForm() {
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm font-medium text-zinc-300">
+          <label
+            htmlFor="use-case"
+            id="use-case"
+            className="text-sm font-medium text-zinc-200"
+          >
             Primary use case
           </label>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-zinc-400">
             What does your team mainly use AI for?
           </p>
           <div className="relative">
             <select
+              id="use-case"
               {...register("useCase")}
               className="w-full appearance-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
             >
@@ -290,7 +377,8 @@ export default function AuditForm() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-2 top-2.5 h-4 w-4 text-zinc-500" />
+            <ChevronDown
+              aria-hidden="true" className="pointer-events-none absolute right-2 top-2.5 h-4 w-4 text-zinc-400" />
           </div>
           {errors.useCase && (
             <p className="text-xs text-red-400">{errors.useCase.message}</p>
@@ -305,8 +393,14 @@ export default function AuditForm() {
         className="w-full overflow-hidden rounded-xl bg-emerald-500 px-6 py-4 text-base font-semibold text-zinc-950 transition-all hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting ? (
-          <span className="flex items-center justify-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
+          <span
+            aria-live="polite"
+            className="flex items-center justify-center gap-2"
+          >
+            <Loader2
+              aria-hidden="true"
+              className="h-4 w-4 animate-spin"
+            />
             Running your audit…
           </span>
         ) : (
