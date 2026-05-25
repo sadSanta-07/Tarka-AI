@@ -84,4 +84,4 @@ Two variants:
 - **Lean stack** (savings < $100/mo): acknowledges the optimization score and confirms the stack is well-matched
 - **Savings found** (savings ≥ $100/mo): leads with the top saving opportunity by dollar amount, same structure as the AI version
 
-The fallback was tested by temporarily unsetting `GEMINI_API_KEY` and running several audits. All fallback summaries read naturally alongside the tool breakdown.
+The fallback was tested by temporarily unsetting `GEMINI_API_KEY` and running several audits. All fallback summaries read naturally alongside the tool breakdown.-
