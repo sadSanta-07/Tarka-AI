@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useCallback,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,11 +11,11 @@ import { auditFormSchema, type AuditFormValues } from "@/lib/form-schema";
 const STORAGE_KEY = "credex_audit_form";
 
 const USE_CASES = [
-  { value: "coding", label: "Coding & Engineering" },
-  { value: "writing", label: "Writing & Content" },
-  { value: "data", label: "Data & Analysis" },
+  { value: "coding",   label: "Coding & Engineering" },
+  { value: "writing",  label: "Writing & Content" },
+  { value: "data",     label: "Data & Analysis" },
   { value: "research", label: "Research" },
-  { value: "mixed", label: "Mixed / General" },
+  { value: "mixed",    label: "Mixed / General" },
 ] as const;
 
 const DEFAULT_TOOL_ROW: AuditFormValues["tools"][number] = {
@@ -29,9 +24,9 @@ const DEFAULT_TOOL_ROW: AuditFormValues["tools"][number] = {
   seats: 1,
   monthlySpend: 0,
 };
+
 export default function AuditForm() {
   const [isReady, setIsReady] = useState(false);
-
   const router = useRouter();
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -54,52 +49,39 @@ export default function AuditForm() {
   } = form;
 
   const { fields, append, remove } = useFieldArray({ control, name: "tools" });
-  const watchedTools = useWatch({
-    control,
-    name: "tools",
-  });
+  const watchedTools = useWatch({ control, name: "tools" });
+
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-
-      if (saved) {
-        const parsed = JSON.parse(saved) as AuditFormValues;
-
-        reset(parsed);
-      }
+      if (saved) reset(JSON.parse(saved) as AuditFormValues);
     } catch {
+
     } finally {
       setIsReady(true);
     }
   }, [reset]);
 
+ 
   const handleFormChange = useCallback(() => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
       try {
-        const values = form.getValues();
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
-      } catch {
-        // storage full or blocked
-      }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(form.getValues()));
+      } catch 
     }, 300);
   }, [form]);
 
-  useEffect(() => {
-
-    return () => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    };
+  useEffect(() => () => {
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
   }, []);
 
-  const handleToolChange = useCallback(
-    (index: number, toolId: string) => {
-      setValue(`tools.${index}.toolId`, toolId);
-      setValue(`tools.${index}.planId`, "");
-    },
-    [setValue]
-  );
+
+  const handleToolChange = useCallback((index: number, toolId: string) => {
+    setValue(`tools.${index}.toolId`, toolId);
+    setValue(`tools.${index}.planId`, "");
+  }, [setValue]);
 
   const onSubmit = async (data: AuditFormValues) => {
     try {
@@ -108,12 +90,10 @@ export default function AuditForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-
       if (!res.ok) {
         const err = await res.json().catch(() => ({})) as { message?: string };
         throw new Error(err.message ?? "Audit failed");
       }
-
       const { auditId } = await res.json() as { auditId: string };
       localStorage.removeItem(STORAGE_KEY);
       router.push(`/audit/${auditId}`);
@@ -122,214 +102,144 @@ export default function AuditForm() {
       alert("Something went wrong. Please try again.");
     }
   };
-  if (!isReady) {
-    return (
-      <div className="min-h-[700px]" />
-    );
-  }
+
+  if (!isReady) return <div className="min-h-[500px]" />;
+
   return (
     <form
       aria-label="AI spend audit form"
       onSubmit={handleSubmit(onSubmit)}
       onChange={handleFormChange}
-      className="space-y-6"
+      className="space-y-4"
     >
-      {/*  Tool Rows  */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-zinc-400">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
             Your AI Tools
           </h2>
-          <span className="text-xs text-zinc-400">
+          <span className="text-xs text-zinc-500">
             {fields.length} tool{fields.length !== 1 ? "s" : ""}
           </span>
         </div>
 
         {fields.map((field, index) => {
           const selectedToolId = watchedTools[index]?.toolId;
-
-          const selectedTool = TOOLS.find(
-            (t) => t.id === selectedToolId
-          );
+          const selectedTool = TOOLS.find((t) => t.id === selectedToolId);
 
           return (
             <fieldset
               key={field.id}
-              className="rounded-2xl border border-zinc-700 bg-zinc-900/70 p-4"
+              className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 space-y-3"
             >
-              <legend className="sr-only">
-                AI Tool Configuration {index + 1}
-              </legend>
+              <legend className="sr-only">Tool {index + 1}</legend>
 
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_100px_140px_56px]">
 
-                {/* TOOL */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor={`tool-${index}`}
-                    className="block text-sm font-medium text-zinc-200"
-                  >
+              <div className="grid grid-cols-2 gap-3">
+                {/* Tool */}
+                <div className="space-y-1.5">
+                  <label htmlFor={`tool-${index}`} className="text-xs font-medium text-zinc-300">
                     Tool
                   </label>
-
                   <div className="relative">
                     <select
                       id={`tool-${index}`}
-                      aria-invalid={
-                        errors.tools?.[index]?.toolId
-                          ? true
-                          : undefined
-                      }
-                      aria-describedby={
-                        errors.tools?.[index]?.toolId
-                          ? `tool-error-${index}`
-                          : undefined
-                      }
                       {...register(`tools.${index}.toolId`)}
-                      onChange={(e) =>
-                        handleToolChange(index, e.target.value)
-                      }
-                      className="min-h-[48px] w-full appearance-none rounded-xl border border-zinc-600 bg-zinc-800 px-4 pr-10 text-sm text-white transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      onChange={(e) => handleToolChange(index, e.target.value)}
+                      aria-invalid={!!errors.tools?.[index]?.toolId}
+                      className="w-full appearance-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
                     >
-                      <option value="">Select tool</option>
-
-                      {TOOLS.map((tool) => (
-                        <option
-                          key={tool.id}
-                          value={tool.id}
-                        >
-                          {tool.name}
-                        </option>
+                      <option value="">Select tool…</option>
+                      {TOOLS.map((t) => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
                       ))}
                     </select>
-
-                    <ChevronDown
-                      aria-hidden="true"
-                      className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400"
-                    />
+                    <ChevronDown aria-hidden className="pointer-events-none absolute right-2.5 top-3 h-4 w-4 text-zinc-500" />
                   </div>
-
                   {errors.tools?.[index]?.toolId && (
-                    <p
-                      id={`tool-error-${index}`}
-                      role="alert"
-                      className="text-xs text-red-400"
-                    >
-                      {errors.tools[index]?.toolId?.message}
-                    </p>
+                    <p role="alert" className="text-xs text-red-400">{errors.tools[index]?.toolId?.message}</p>
                   )}
                 </div>
 
-                {/* PLAN */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor={`plan-${index}`}
-                    className="block text-sm font-medium text-zinc-200"
-                  >
+                {/* Plan */}
+                <div className="space-y-1.5">
+                  <label htmlFor={`plan-${index}`} className="text-xs font-medium text-zinc-300">
                     Plan
                   </label>
-
                   <div className="relative">
                     <select
                       id={`plan-${index}`}
-                      disabled={!selectedTool}
-                      aria-invalid={
-                        errors.tools?.[index]?.planId
-                          ? true
-                          : undefined
-                      }
                       {...register(`tools.${index}.planId`)}
-                      className="min-h-[48px] w-full appearance-none rounded-xl border border-zinc-600 bg-zinc-800 px-4 pr-10 text-sm text-white transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+                      disabled={!selectedTool}
+                      aria-invalid={!!errors.tools?.[index]?.planId}
+                      className="w-full appearance-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40 disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                      <option value="">Select plan</option>
-
-                      {selectedTool?.plans.map((plan) => (
-                        <option
-                          key={plan.id}
-                          value={plan.id}
-                        >
-                          {plan.name}
+                      <option value="">Select plan…</option>
+                      {selectedTool?.plans.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}{p.pricePerSeat > 0 ? ` — $${p.pricePerSeat}/seat` : " — Free"}
                         </option>
                       ))}
                     </select>
-
-                    <ChevronDown
-                      aria-hidden="true"
-                      className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400"
-                    />
+                    <ChevronDown aria-hidden className="pointer-events-none absolute right-2.5 top-3 h-4 w-4 text-zinc-500" />
                   </div>
+                  {errors.tools?.[index]?.planId && (
+                    <p role="alert" className="text-xs text-red-400">{errors.tools[index]?.planId?.message}</p>
+                  )}
                 </div>
+              </div>
 
-                {/* SEATS */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor={`seats-${index}`}
-                    className="block text-sm font-medium text-zinc-200"
-                  >
+
+              <div className="grid grid-cols-[1fr_1fr_44px] gap-3 items-end">
+                {/* Seats */}
+                <div className="space-y-1.5">
+                  <label htmlFor={`seats-${index}`} className="text-xs font-medium text-zinc-300">
                     Seats
                   </label>
-
                   <input
                     id={`seats-${index}`}
                     type="number"
                     min={1}
                     inputMode="numeric"
-                    {...register(`tools.${index}.seats`, {
-                      valueAsNumber: true,
-                    })}
-                    className="min-h-[48px] w-full rounded-xl border border-zinc-600 bg-zinc-800 px-4 text-sm text-white transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    {...register(`tools.${index}.seats`, { valueAsNumber: true })}
+                    className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
                   />
+                  {errors.tools?.[index]?.seats && (
+                    <p role="alert" className="text-xs text-red-400">{errors.tools[index]?.seats?.message}</p>
+                  )}
                 </div>
 
-                {/* MONTHLY SPEND */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor={`monthly-${index}`}
-                    className="block text-sm font-medium text-zinc-200"
-                  >
-                    Monthly Spend
+                {/* Monthly Spend */}
+                <div className="space-y-1.5">
+                  <label htmlFor={`spend-${index}`} className="text-xs font-medium text-zinc-300">
+                    $/month
                   </label>
-
                   <div className="relative">
-                    <span
-                      aria-hidden="true"
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
-                    >
-                      $
-                    </span>
-
+                    <span aria-hidden className="absolute left-3 top-2.5 text-sm text-zinc-500">$</span>
                     <input
-                      id={`monthly-${index}`}
+                      id={`spend-${index}`}
                       type="number"
                       min={0}
                       step="0.01"
                       inputMode="decimal"
-                      {...register(
-                        `tools.${index}.monthlySpend`,
-                        {
-                          valueAsNumber: true,
-                        }
-                      )}
-                      className="min-h-[48px] w-full rounded-xl border border-zinc-600 bg-zinc-800 py-2 pl-8 pr-4 text-sm text-white transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      {...register(`tools.${index}.monthlySpend`, { valueAsNumber: true })}
+                      className="w-full rounded-lg border border-zinc-700 bg-zinc-800 py-2.5 pl-7 pr-3 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
                     />
                   </div>
+                  {errors.tools?.[index]?.monthlySpend && (
+                    <p role="alert" className="text-xs text-red-400">{errors.tools[index]?.monthlySpend?.message}</p>
+                  )}
                 </div>
 
-                {/* REMOVE */}
-                <div className="flex items-end">
-                  <button
-                    type="button"
-                    onClick={() => remove(index)}
-                    disabled={fields.length === 1}
-                    aria-label={`Remove tool ${index + 1}`}
-                    className="flex min-h-[48px] min-w-[48px] items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800 text-zinc-300 transition hover:border-red-500 hover:text-red-400 disabled:opacity-40"
-                  >
-                    <Trash2
-                      aria-hidden="true"
-                      className="h-4 w-4"
-                    />
-                  </button>
-                </div>
+                {/* Remove */}
+                <button
+                  type="button"
+                  onClick={() => remove(index)}
+                  disabled={fields.length === 1}
+                  aria-label={`Remove tool ${index + 1}`}
+                  className="flex h-[42px] w-[44px] items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-500 transition-colors hover:border-red-500/50 hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <Trash2 aria-hidden className="h-4 w-4" />
+                </button>
               </div>
             </fieldset>
           );
@@ -339,86 +249,59 @@ export default function AuditForm() {
           type="button"
           onClick={() => append({ ...DEFAULT_TOOL_ROW })}
           disabled={fields.length >= 20}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 py-3 text-sm text-zinc-400 transition-colors hover:border-emerald-600 hover:text-emerald-400 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 py-3 text-sm text-zinc-500 transition-colors hover:border-emerald-600 hover:text-emerald-400 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <Plus
-            aria-hidden="true"
-            className="h-4 w-4"
-          />
+          <Plus aria-hidden className="h-4 w-4" />
           Add another tool
         </button>
       </div>
-
-      {/* ── Team Context ── */}
-      <div className="grid gap-4 md:grid-cols-2 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-        <div className="space-y-1">
-          <label
-            htmlFor="team-size"
-            className="text-sm font-medium text-zinc-200"
-          >Team size</label>
-          <p className="text-xs text-zinc-400">Total people on your team</p>
+      <div className="grid grid-cols-2 gap-4 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+        <div className="space-y-1.5">
+          <label htmlFor="team-size" className="text-sm font-medium text-zinc-200">Team size</label>
+          <p className="text-xs text-zinc-500">Total people on your team</p>
           <input
             id="team-size"
             type="number"
             min={1}
+            inputMode="numeric"
             {...register("teamSize", { valueAsNumber: true })}
-            className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
           />
           {errors.teamSize && (
-            <p className="text-xs text-red-400">{errors.teamSize.message}</p>
+            <p role="alert" className="text-xs text-red-400">{errors.teamSize.message}</p>
           )}
         </div>
 
-        <div className="space-y-1">
-          <label
-            htmlFor="use-case"
-            className="text-sm font-medium text-zinc-200"
-          >
-            Primary use case
-          </label>
-          <p className="text-xs text-zinc-400">
-            What does your team mainly use AI for?
-          </p>
+        <div className="space-y-1.5">
+          <label htmlFor="use-case" className="text-sm font-medium text-zinc-200">Primary use case</label>
+          <p className="text-xs text-zinc-500">What does your team mainly use AI for?</p>
           <div className="relative">
             <select
               id="use-case"
               {...register("useCase")}
-              className="w-full appearance-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
+              className="w-full appearance-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40"
             >
               {USE_CASES.map((uc) => (
-                <option key={uc.value} value={uc.value}>
-                  {uc.label}
-                </option>
+                <option key={uc.value} value={uc.value}>{uc.label}</option>
               ))}
             </select>
-            <ChevronDown
-              aria-hidden="true" className="pointer-events-none absolute right-2 top-2.5 h-4 w-4 text-zinc-400" />
+            <ChevronDown aria-hidden className="pointer-events-none absolute right-2.5 top-3 h-4 w-4 text-zinc-500" />
           </div>
-          {errors.useCase && (
-            <p className="text-xs text-red-400">{errors.useCase.message}</p>
-          )}
         </div>
       </div>
 
-      {/* ── Submit ── */}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full overflow-hidden rounded-xl bg-emerald-500 px-6 py-4 text-base font-semibold text-zinc-950  hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-xl bg-emerald-500 px-6 py-4 text-base font-semibold text-zinc-950 transition-colors hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting ? (
-          <span
-            aria-live="polite"
-            className="flex items-center justify-center gap-2"
-          >
-            <Loader2
-              aria-hidden="true"
-              className="h-4 w-4 animate-spin"
-            />
+          <span aria-live="polite" className="flex items-center justify-center gap-2">
+            <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
             Running your audit…
           </span>
         ) : (
-          <span>Run my free audit →</span>
+          "Run my free audit →"
         )}
       </button>
 

@@ -82,7 +82,7 @@ export function LeadCaptureForm({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3">
-        {/* Honeypot — bots fill this, humans don't see it */}
+        {/* Honeypot*/}
         <input
           type="text"
           name="website"

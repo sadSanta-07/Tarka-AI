@@ -27,7 +27,7 @@ const ACTION_LABELS = {
 
 export function AuditResults({ audit }: { audit: Audit }) {
   const [copied, setCopied] = useState(false);
-  const { resultData, inputData } = audit;
+  const { resultData } = audit;
   const isHighValue = resultData.totalMonthlySavings >= HIGH_VALUE_SAVINGS_THRESHOLD;
   const isAlreadyOptimal =
     resultData.optimizationScore >= 80;
@@ -49,7 +49,6 @@ export function AuditResults({ audit }: { audit: Audit }) {
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
       <div className="mx-auto max-w-3xl px-4 py-12 space-y-8">
 
-        {/* ── Header ── */}
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm text-zinc-500 uppercase tracking-widest mb-1">AI Spend Audit</p>
@@ -64,7 +63,6 @@ export function AuditResults({ audit }: { audit: Audit }) {
           </button>
         </div>
 
-        {/* ── Savings Hero ── */}
         <div className={`rounded-2xl border p-8 text-center ${isAlreadyOptimal
           ? "border-zinc-700 bg-zinc-900"
           : "border-emerald-500/30 bg-emerald-500/5"
@@ -105,7 +103,7 @@ export function AuditResults({ audit }: { audit: Audit }) {
           </div>
         )}
 
-        {/* Per-tool breakdown */}
+
         <div className="space-y-3">
           <h2 className="text-sm font-semibold uppercase tracking-widest text-zinc-500">
             Tool breakdown
@@ -183,7 +181,7 @@ export function AuditResults({ audit }: { audit: Audit }) {
           isAlreadyOptimal={isAlreadyOptimal}
         />
 
-        {/* ── Share ── */}
+
         <div className="flex items-center justify-center gap-3 pt-2">
           <button
             onClick={handleCopyLink}

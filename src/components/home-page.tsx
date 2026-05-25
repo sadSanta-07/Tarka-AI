@@ -40,7 +40,6 @@ export default function HomePage() {
       className="relative min-h-screen overflow-hidden bg-black text-white"
       aria-label="Tarka AI homepage"
     >
-      {/* Decorative Background */}
       <div
         aria-hidden="true"
         className="absolute inset-0 overflow-hidden"
@@ -53,7 +52,7 @@ export default function HomePage() {
       </div>
 
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-8">
-        {/* Header */}
+
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
@@ -85,12 +84,12 @@ export default function HomePage() {
           </a>
         </header>
 
-        {/* Hero Section */}
+
         <section
           aria-labelledby="hero-heading"
           className="grid flex-1 items-center gap-16 py-14 lg:grid-cols-[1.05fr_0.95fr]"
         >
-          {/* Left Side */}
+    
           <div className="space-y-8 fade-up">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-200 backdrop-blur-xl">
               Free audit · No login required
@@ -113,8 +112,6 @@ export default function HomePage() {
                 stack and shows exactly where the waste is.
               </p>
             </div>
-
-            {/* Stats */}
             <section
               aria-label="Audit statistics"
               className="flex flex-wrap items-center gap-5 pt-2 text-sm text-zinc-300"
@@ -150,8 +147,6 @@ export default function HomePage() {
                 free
               </div>
             </section>
-
-            {/* Features */}
             <section
               aria-labelledby="features-heading"
               className="pt-6"
@@ -191,8 +186,6 @@ export default function HomePage() {
               </div>
             </section>
           </div>
-
-          {/* Audit Card */}
           <section
             id="audit"
             aria-labelledby="audit-heading"
@@ -244,7 +237,6 @@ export default function HomePage() {
           </section>
         </section>
 
-        {/* Footer */}
         <footer className="flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] py-8 text-sm text-zinc-400 sm:flex-row">
           <p>
             Built by{" "}
