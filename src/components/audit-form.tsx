@@ -64,15 +64,22 @@ export default function AuditForm() {
   }, [reset]);
 
  
-  const handleFormChange = useCallback(() => {
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(form.getValues()));
-      } catch 
-    }, 300);
-  }, [form]);
+const handleFormChange = useCallback(() => {
+  if (saveTimerRef.current) {
+    clearTimeout(saveTimerRef.current);
+  }
 
+  saveTimerRef.current = setTimeout(() => {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(form.getValues())
+      );
+    } catch (error) {
+      console.error("Failed to save form state:", error);
+    }
+  }, 300);
+}, [form]);
   useEffect(() => () => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
   }, []);
