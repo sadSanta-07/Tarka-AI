@@ -1,6 +1,14 @@
 "use client";
 
-import AuditForm from "@/components/audit-form";
+import dynamic from "next/dynamic";
+
+const AuditForm = dynamic(
+  () => import("@/components/audit-form"),
+  {
+    ssr: false,
+    loading: () => <div>Loading form...</div>,
+  }
+);
 import {
   Shield,
   Sparkles,
@@ -37,11 +45,11 @@ export default function HomePage() {
         aria-hidden="true"
         className="absolute inset-0 overflow-hidden"
       >
-        <div className="absolute left-1/2 top-[-120px] h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-emerald-500/10 blur-3xl animate-pulse" />
+        <div className="absolute left-1/2 top-[-120px] h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-emerald-500/10 blur-xl" />
 
-        <div className="absolute bottom-[-100px] left-[-100px] h-[320px] w-[320px] rounded-full bg-emerald-500/5 blur-3xl" />
+        <div className="absolute bottom-[-100px] left-[-100px] h-[320px] w-[320px] rounded-full bg-emerald-500/5 blur-xl" />
 
-        <div className="absolute right-[-80px] top-1/3 h-[260px] w-[260px] rounded-full bg-white/[0.03] blur-3xl" />
+        <div className="absolute right-[-80px] top-1/3 h-[260px] w-[260px] rounded-full bg-white/[0.03] blur-xl" />
       </div>
 
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-8">
@@ -188,7 +196,7 @@ export default function HomePage() {
           <section
             id="audit"
             aria-labelledby="audit-heading"
-            className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-white/[0.04] p-7 shadow-[0_0_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition-transform duration-300 hover:-translate-y-1 fade-up"
+            className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-white/[0.04] p-7 shadow-[0_0_80px_rgba(0,0,0,0.45)] transition-transform duration-300 hover:-translate-y-1 fade-up"
           >
             <div
               aria-hidden="true"
