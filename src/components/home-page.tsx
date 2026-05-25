@@ -8,8 +8,6 @@ import {
   Zap,
 } from "lucide-react";
 
-import { motion } from "framer-motion";
-
 const FEATURES = [
   {
     icon: TrendingDown,
@@ -31,8 +29,9 @@ const FEATURES = [
 export default function HomePage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
+      {/* Background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-[-120px] h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-emerald-500/10 blur-3xl animate-[pulse_10s_ease-in-out_infinite]" />
+        <div className="absolute left-1/2 top-[-120px] h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-emerald-500/10 blur-3xl animate-pulse" />
 
         <div className="absolute bottom-[-100px] left-[-100px] h-[320px] w-[320px] rounded-full bg-emerald-500/5 blur-3xl" />
 
@@ -40,6 +39,7 @@ export default function HomePage() {
       </div>
 
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-8">
+        {/* Header */}
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl">
@@ -65,15 +65,11 @@ export default function HomePage() {
           </a>
         </header>
 
+        {/* Main */}
         <section className="grid flex-1 items-center gap-16 py-14 lg:grid-cols-[1.05fr_0.95fr]">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="space-y-8"
-          >
+          {/* Left Side */}
+          <div className="space-y-8 fade-up">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-300 backdrop-blur-xl">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               Free audit · No login required
             </div>
 
@@ -85,10 +81,10 @@ export default function HomePage() {
               </h1>
 
               <p className="max-w-xl text-lg leading-relaxed text-zinc-400 sm:text-xl">
-                Most startups overpay for Cursor, Claude, ChatGPT,
-                Copilot, and internal AI tooling without realizing it.
-                Tarka analyzes your stack and shows exactly where
-                the waste is.
+                Most startups overpay for Cursor, Claude,
+                ChatGPT, Copilot, and internal AI tooling
+                without realizing it. Tarka analyzes your
+                stack and shows exactly where the waste is.
               </p>
             </div>
 
@@ -119,13 +115,12 @@ export default function HomePage() {
               </div>
             </div>
 
+            {/* Features */}
             <div className="grid gap-4 pt-6 md:grid-cols-3">
               {FEATURES.map((item) => (
-                <motion.div
+                <div
                   key={item.title}
-                  whileHover={{ y: -4 }}
-                  transition={{ duration: 0.2 }}
-                  className="rounded-3xl bg-white/[0.03] p-5 backdrop-blur-xl"
+                  className="rounded-3xl bg-white/[0.03] p-5 backdrop-blur-xl transition-all duration-200 hover:-translate-y-1 hover:bg-white/[0.05]"
                 >
                   <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/10">
                     <item.icon className="h-5 w-5 text-emerald-400" />
@@ -138,18 +133,15 @@ export default function HomePage() {
                   <p className="mt-3 text-sm leading-relaxed text-zinc-500">
                     {item.body}
                   </p>
-                </motion.div>
+                </div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
+          {/* Audit Card */}
+          <div
             id="audit"
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            whileHover={{ y: -2 }}
-            className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-white/[0.04] p-7 shadow-[0_0_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl"
+            className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-white/[0.04] p-7 shadow-[0_0_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition-transform duration-300 hover:-translate-y-1 fade-up"
           >
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent" />
 
@@ -166,7 +158,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                   Live
                 </div>
               </div>
@@ -178,9 +170,10 @@ export default function HomePage() {
                 No spam. No sales calls. Email optional.
               </div>
             </div>
-          </motion.div>
+          </div>
         </section>
 
+        {/* Footer */}
         <footer className="flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] py-8 text-sm text-zinc-500 sm:flex-row">
           <p>
             Built by{" "}
