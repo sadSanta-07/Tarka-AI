@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useCallback, useRef } from "react";
+import {
+  useEffect,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,8 +29,9 @@ const DEFAULT_TOOL_ROW: AuditFormValues["tools"][number] = {
   seats: 1,
   monthlySpend: 0,
 };
-
 export default function AuditForm() {
+  const [isReady, setIsReady] = useState(false);
+
   const router = useRouter();
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -53,15 +59,19 @@ export default function AuditForm() {
     name: "tools",
   });
 
-  // Restore from localStorage on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
+
       if (saved) {
         const parsed = JSON.parse(saved) as AuditFormValues;
+
         reset(parsed);
       }
-    } catch { }
+    } catch {
+    } finally {
+      setIsReady(true);
+    }
   }, [reset]);
 
   const handleFormChange = useCallback(() => {
@@ -77,6 +87,7 @@ export default function AuditForm() {
   }, [form]);
 
   useEffect(() => {
+
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     };
@@ -111,7 +122,11 @@ export default function AuditForm() {
       alert("Something went wrong. Please try again.");
     }
   };
-
+  if (!isReady) {
+    return (
+      <div className="min-h-[700px]" />
+    );
+  }
   return (
     <form
       aria-label="AI spend audit form"
@@ -357,7 +372,6 @@ export default function AuditForm() {
         <div className="space-y-1">
           <label
             htmlFor="use-case"
-            id="use-case"
             className="text-sm font-medium text-zinc-200"
           >
             Primary use case
@@ -390,7 +404,7 @@ export default function AuditForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full overflow-hidden rounded-xl bg-emerald-500 px-6 py-4 text-base font-semibold text-zinc-950 transition-all hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full overflow-hidden rounded-xl bg-emerald-500 px-6 py-4 text-base font-semibold text-zinc-950  hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting ? (
           <span

@@ -79,7 +79,7 @@ export default function HomePage() {
 
           <a
             href="#audit"
-            className="hidden min-h-[44px] rounded-full border border-white/10 bg-white/[0.03] px-5 py-2 text-sm text-zinc-100 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06] focus:outline-none focus:ring-2 focus:ring-emerald-400 sm:flex items-center"
+            className="hidden min-h-[44px] rounded-full border border-white/10 bg-white/[0.03] px-5 py-2 text-sm text-zinc-100  duration-300 hover:border-white/20 hover:bg-white/[0.06] focus:outline-none focus:ring-2 focus:ring-emerald-400 sm:flex items-center"
           >
             Run audit
           </a>
@@ -167,7 +167,7 @@ export default function HomePage() {
                 {FEATURES.map((item) => (
                   <article
                     key={item.title}
-                    className="rounded-3xl bg-white/[0.03] p-5 backdrop-blur-xl transition-all duration-200 hover:-translate-y-1 hover:bg-white/[0.05]"
+                    className="rounded-3xl bg-white/[0.03] p-5 backdrop-blur-xl  duration-200 hover:-translate-y-1 hover:bg-white/[0.05]"
                   >
                     <div
                       className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/10"
@@ -196,7 +196,7 @@ export default function HomePage() {
           <section
             id="audit"
             aria-labelledby="audit-heading"
-            className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-white/[0.04] p-7 shadow-[0_0_80px_rgba(0,0,0,0.45)] transition-transform duration-300 hover:-translate-y-1 fade-up"
+            className="relative min-h-[700px] overflow-hidden rounded-[32px] border border-white/[0.08] bg-white/[0.04] p-7 transition-transform duration-300 hover:-translate-y-1 fade-up"
           >
             <div
               aria-hidden="true"
