@@ -7,7 +7,23 @@ import { generateAuditSummary } from "@/lib/gemini";
 import { auditFormSchema } from "@/lib/form-schema";
 import type { AuditInputData } from "@/lib/db/schema";
 
+const recentRequests = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const requests = recentRequests.get(ip) ?? [];
+  const recent = requests.filter(t => now - t < 60_000);
+  recentRequests.set(ip, [...recent, now]);
+  return recent.length >= 10;
+}
+
 export async function POST(req: NextRequest) {
+
+  const ip = req.headers.get("x-forwarded-for") ?? "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json({ message: "Too many requests" }, { status: 429 });
+  }
+
   let body: unknown;
   try {
     body = await req.json();
@@ -32,9 +48,9 @@ export async function POST(req: NextRequest) {
   const resultData = runAudit(inputData);
 
   const aiSummary = await generateAuditSummary(inputData, resultData);
-  resultData.aiSummary = aiSummary; 
+  resultData.aiSummary = aiSummary;
 
-  const auditId = nanoid(10); 
+  const auditId = nanoid(10);
 
   try {
     await db.insert(audits).values({
