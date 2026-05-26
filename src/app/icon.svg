@@ -1,0 +1,41 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="greenGradient" x1="256" y1="40" x2="256" y2="472" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D492"/>
+      <stop offset="50%" stop-color="#00D492"/>
+      <stop offset="100%" stop-color="#00D492"/>
+    </linearGradient>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Stylized Space-Grotesk Inspired T -->
+  <path
+    d="
+      M96 96
+      Q96 64 128 64
+      H384
+      Q430 64 448 96
+      L420 132
+      H308
+      Q292 132 284 144
+      L244 416
+      Q240 448 208 448
+      H176
+      Q144 448 148 416
+      L188 144
+      Q190 132 176 132
+      H64
+      L96 96
+      Z
+    "
+    fill="url(#greenGradient)"
+    filter="url(#glow)"
+  />
+</svg>
