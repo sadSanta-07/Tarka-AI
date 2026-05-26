@@ -1,8 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { runAudit, auditTool, computeOptimizationScore } from "@/lib/audit-engine";
+import { runAudit, computeOptimizationScore } from "@/lib/audit-engine";
 import type { AuditInputData, ToolInput } from "@/lib/db/schema";
 
-//helper
 
 function makeInput(
   tools: ToolInput[],
@@ -56,16 +55,14 @@ describe("Rule 2 — cheaper same-vendor plan", () => {
   });
 });
 
-//heaper alternative tool 
 
 describe("Rule 3 — cheaper alternative tool", () => {
   it("does not recommend switch if savings < 20% of current spend", () => {
-    // Cursor Pro at $20 vs Windsurf Pro at $20 — same price, no 20% savings
     const result = runAudit(
       makeInput([{ toolId: "cursor", planId: "pro", seats: 1, monthlySpend: 20 }])
     );
     const rec = result.recommendations[0];
-    // Should not switch 
+
     expect(rec.monthlySavings).toBeLessThanOrEqual(5);
   });
 });
@@ -93,7 +90,6 @@ describe("Rule 4 — Credex credits", () => {
   });
 });
 
-//Already optimal
 
 describe("already optimal — no manufactured savings", () => {
   it("returns keep for ChatGPT Plus single seat mixed use", () => {
@@ -111,7 +107,6 @@ describe("already optimal — no manufactured savings", () => {
   });
 });
 
-// Total savings
 
 describe("total savings calculation", () => {
   it("correctly sums savings across multiple tools", () => {
@@ -136,7 +131,6 @@ describe("total savings calculation", () => {
   });
 });
 
-//Edge cases
 
 describe("edge cases", () => {
   it("handles unknown toolId gracefully without throwing", () => {

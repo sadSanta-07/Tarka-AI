@@ -1,8 +1,6 @@
 import {
-  TOOLS,
   getToolById,
   getPlanById,
-  HIGH_VALUE_SAVINGS_THRESHOLD,
   TEAM_PLAN_MIN_SENSIBLE_SEATS,
   type UseCase,
 } from "./pricing-data";
@@ -231,7 +229,6 @@ function auditApiTool(
 }
 
 //helper
-
 function makeKeepRecommendation(
   input: ToolInput,
   currentSpend: number,
@@ -258,7 +255,6 @@ function computeOptimizationScore(
 ): number {
   if (totalCurrentSpend === 0) return 100;
   const wasteRatio = totalMonthlySavings / totalCurrentSpend;
-  // 0% waste = 100 score, 50%+ waste = 0 score
   return Math.max(0, Math.round(100 - wasteRatio * 200));
 }
 

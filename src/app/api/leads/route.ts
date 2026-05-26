@@ -114,7 +114,6 @@ export async function POST(req: NextRequest) {
 }
 
 function buildEmailHtml({
-    email,
     company,
     totalMonthlySavings,
     isHighValue,
